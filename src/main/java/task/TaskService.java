@@ -1,29 +1,32 @@
 package task;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import lombok.AllArgsConstructor;
-
-@AllArgsConstructor
 public class TaskService {
-    private TaskDao taskDao;
+    private static final List<String> AVAILABLE_PRIORITIES = Arrays.stream(Priority.values()).map(Enum::name).toList();
+    private final TaskDao taskDao;
+
+    public TaskService(TaskDao taskDao) {
+        this.taskDao = taskDao;
+    }
 
     public void addTask(TaskDto taskDto) throws IllegalArgumentException {
-        if (taskDto.getDescription() != null && taskDto.getDescription().length() > 3) {
+        if (taskDto.getDescription() != null && taskDto.getDescription().length() > 3 && AVAILABLE_PRIORITIES.contains(taskDto.getPriority())) {
             Priority priority = Priority.valueOf(taskDto.getPriority());
             Task task = new Task(taskDto.getDescription(), LocalDateTime.now(), priority);
             taskDao.insert(task);
         } else {
-            throw new IllegalArgumentException("Opis zadania nie został podany");
+            throw new IllegalArgumentException("Opis zadania nie został podany lub priorytet jest błędny");
         }
     }
 
+
     public List<PrintTaskDto> getAllTasks() {
         List<Task> tasks = taskDao.findAll();
-        return tasks.stream().map(t -> new PrintTaskDto(t.getId(), t.getDescription(), t.getCreateDate(), t.getPriority().name()))
-             .collect(Collectors.toList());
+        return tasks.stream().map(t -> new PrintTaskDto(t.getId(), t.getDescription(), t.getCreateDate(), t.getPriority().name())).collect(Collectors.toList());
     }
 
     public void deleteTask(int taskIdToBeDeleted) {
@@ -34,11 +37,9 @@ public class TaskService {
         }
     }
 
-    public void updateTask(TaskDto taskDto, int taskIdToBeUpdated) {
-        if (taskDto.getDescription() != null && taskDto.getDescription().length() > 3
-            && taskIdToBeUpdated > 0) {
-            Task task = new Task(taskIdToBeUpdated, taskDto.getDescription());
-            taskDao.update(task);
+    public void updateTask(String taskDescription, int taskIdToBeUpdated) {
+        if (taskDescription != null && taskDescription.length() > 3 && taskIdToBeUpdated > 0) {
+            taskDao.update(taskDescription, taskIdToBeUpdated);
         } else {
             throw new IllegalArgumentException("Opis zadania nie został podany lub id zadania jest mniejsze bądź równe 0");
         }

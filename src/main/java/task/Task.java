@@ -28,20 +28,10 @@ public class Task {
     @Enumerated(EnumType.STRING)
     private Priority priority;
 
-    public Task(int id, String description) {
-        this.id = id;
-        this.description = description;
-    }
-
-    public Task(String description) {
-        this.description = description;
-    }
-
     public Task(String description, LocalDateTime createDate, Priority priority) {
         this.description = description;
         this.createDate = createDate;
         this.priority = priority;
     }
-
 
 }

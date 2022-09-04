@@ -59,8 +59,8 @@ public class Main {
                 case 3 -> {
                     List<PrintTaskDto> tasks = taskService.getAllTasks();
                     // do VM options trzeba dodać "--add-opens java.base/java.time=ALL-UNNAMED"
-                    System.out.println(gson.toJson(tasks));
-                    //tasks.forEach(System.out::println);
+                    //System.out.println(gson.toJson(tasks));
+                    tasks.forEach(System.out::println);
                     System.out.println("Wyświetlanie wszystkich zadań");
                 }
                 case 4 -> {
@@ -70,8 +70,7 @@ public class Main {
                     System.out.println("Podaj nowy opis: ");
                     in.nextLine();
                     String newDescription = in.nextLine();
-                    TaskDto taskDto = new TaskDto(newDescription);
-                    taskService.updateTask(taskDto, taskIdToBeUpdated);
+                    taskService.updateTask(newDescription, taskIdToBeUpdated);
                 }
             }
         }

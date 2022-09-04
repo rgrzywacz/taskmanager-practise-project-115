@@ -36,12 +36,12 @@ public class TaskDao {
         entityManager.close();
     }
 
-    public void update(Task task) {
+    public void update(String description, int taskId) {
         EntityManager entityManager = ConnectionManager.getEntityManager();
         entityManager.getTransaction().begin();
         entityManager.createQuery("update Task t set t.description=:description where t.id=:id")
-                             .setParameter("description", task.getDescription())
-                             .setParameter("id", task.getId())
+                             .setParameter("description", description)
+                             .setParameter("id", taskId)
                              .executeUpdate();
         entityManager.getTransaction().commit();
         entityManager.close();
